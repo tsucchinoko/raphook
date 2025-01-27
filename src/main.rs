@@ -1,4 +1,6 @@
 use clap::{Parser, Subcommand};
+use std::io::Write;
+mod cmd;
 
 #[derive(Parser, Debug)]
 #[command(name = "raphook")]
@@ -31,7 +33,16 @@ fn main() {
     match &cli.command {
         Commands::Install { path } => {
             println!("Installing hooks in {}", path);
-            // ここにインストールのロジックを実装
+            std::io::stdout().flush().unwrap();
+
+            match cmd::install::install(path) {
+                Ok(hooks) => {
+                    println!("✔️ ({})", hooks.join(", "));
+                }
+                Err(e) => {
+                    println!("❌\nError: {}", e);
+                }
+            }
         }
         Commands::List => {
             println!("Available hooks:");
