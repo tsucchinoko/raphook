@@ -51,6 +51,14 @@ fn main() {
         Commands::Uninstall { path } => {
             println!("Uninstalling hooks from {}", path);
             // ここにアンインストールのロジックを実装
+            match cmd::uninstall::uninstall(path) {
+                Ok(hooks) => {
+                    println!("✔️ ({})", hooks.join(", "));
+                }
+                Err(e) => {
+                    println!("❌\nError: {}", e);
+                }
+            }
         }
     }
 }
