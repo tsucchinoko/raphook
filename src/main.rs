@@ -1,22 +1,64 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
+use std::io::Write;
+mod cmd;
 
-/// Simple program to greet a person
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    /// Name of the person to greet
-    #[arg(short, long)]
-    name: String,
+#[command(name = "raphook")]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
 
-    /// Number of times to greet
-    #[arg(short, long, default_value_t = 1)]
-    count: u8,
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Install git hooks
+    Install {
+        /// Path to git repository
+        #[arg(short, long, default_value = ".")]
+        path: String,
+    },
+    /// List available hooks
+    List,
+    /// Remove installed hooks
+    Uninstall {
+        /// Path to git repository
+        #[arg(short, long, default_value = ".")]
+        path: String,
+    },
 }
 
 fn main() {
-    let args = Args::parse();
+    let cli = Cli::parse();
 
-    for _ in 0..args.count {
-        println!("Hello {}!", args.name);
+    match &cli.command {
+        Commands::Install { path } => {
+            println!("Installing hooks in {}", path);
+            std::io::stdout().flush().unwrap();
+
+            match cmd::install::install(path) {
+                Ok(hooks) => {
+                    println!("✔️ ({})", hooks.join(", "));
+                }
+                Err(e) => {
+                    println!("❌\nError: {}", e);
+                }
+            }
+        }
+        Commands::List => {
+            println!("Available hooks:");
+            // ここに利用可能なフックの一覧表示ロジックを実装
+        }
+        Commands::Uninstall { path } => {
+            println!("Uninstalling hooks from {}", path);
+            // ここにアンインストールのロジックを実装
+            match cmd::uninstall::uninstall(path) {
+                Ok(hooks) => {
+                    println!("✔️ ({})", hooks.join(", "));
+                }
+                Err(e) => {
+                    println!("❌\nError: {}", e);
+                }
+            }
+        }
     }
 }
