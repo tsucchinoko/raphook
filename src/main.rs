@@ -18,6 +18,14 @@ enum Commands {
         #[arg(short, long, default_value = ".")]
         path: String,
     },
+    /// Run git hooks
+    Run {
+        /// Path to raphook's config file
+        #[arg(short, long, default_value = ".")]
+        path: String,
+        /// Git hook name
+        hook_name: String,
+    },
     /// List available hooks
     List,
     /// Remove installed hooks
@@ -45,13 +53,23 @@ fn main() {
                 }
             }
         }
+        Commands::Run { path, hook_name } => {
+            println!("Running hook {}", hook_name);
+            // ここにフックの実行ロジックを実装
+            match cmd::run::run(path, hook_name) {
+                Ok(hooks) => {
+                    println!("✔️ Run commands ({})", hooks.join(", "));
+                }
+                Err(e) => {
+                    println!("❌\nError: {}", e);
+                }
+            }
+        }
         Commands::List => {
             println!("Available hooks:");
-            // ここに利用可能なフックの一覧表示ロジックを実装
         }
         Commands::Uninstall { path } => {
             println!("Uninstalling hooks from {}", path);
-            // ここにアンインストールのロジックを実装
             match cmd::uninstall::uninstall(path) {
                 Ok(hooks) => {
                     println!("✔️ ({})", hooks.join(", "));
