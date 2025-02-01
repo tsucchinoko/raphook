@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 use std::io::Write;
 mod cmd;
+mod raphook;
 
 #[derive(Parser, Debug)]
 #[command(name = "raphook")]
