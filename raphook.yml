@@ -1,0 +1,17 @@
+pre-push:
+  commands:
+    version:
+      tags: version
+      run: cargo version
+
+pre-commit:
+  parallel: true
+  commands:
+    version:
+      tags: version
+      run: cargo version
+  scripts:
+    "hello.js":
+      runner: node
+    "any.go":
+      runner: go run

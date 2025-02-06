@@ -7,3 +7,5 @@ description = "A simple tool to hook git hooks"
 
 [dependencies]
 clap = { version = "4.5.27", features = ["derive"] }
+serde = { version = "1.0.217", features = ["derive"] }
+serde_yaml = "=0.8.26"
