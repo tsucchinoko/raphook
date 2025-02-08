@@ -32,13 +32,13 @@ jobs:
       matrix:
         include:
           # Linux builds
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            artifact_name: raphook-linux-x64
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            artifact_name: raphook-linux-arm64
-            use_cross: true
+          # - os: ubuntu-latest
+          #   target: x86_64-unknown-linux-gnu
+          #   artifact_name: raphook-linux-x64
+          # - os: ubuntu-latest
+          #   target: aarch64-unknown-linux-gnu
+          #   artifact_name: raphook-linux-arm64
+          #   use_cross: true
 
           # macOS builds
           - os: macos-latest
@@ -96,7 +96,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: raphook-*
-          merge-multiple: true
+          path: dist
+          merge-multiple: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -104,10 +105,9 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Prepare release files
+      - name: Debug directory structure
         run: |
-          mkdir release
-          cp -r */raphook-*/* release/
+          ls -la dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -115,21 +115,11 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           draft: false
-          files: release/*
+          files: dist/raphook-*
           fail_on_unmatched_files: true
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish platform packages
-        run: |
-          for pkg in dist/raphook-*; do
-            cd $pkg
-            npm publish --access public
-            cd ../..
-          done
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish main package
         working-directory: packages/npm/raphook
