@@ -1,0 +1,17 @@
+{
+  "name": "raphook-freebsd-x64",
+  "version": "0.1.0",
+  "description": "Git hooks manager written in Rust (FreeBSD x64 build)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsucchinoko/raphook.git",
+    "directory": "packages/raphook-freebsd-x64"
+  },
+  "os": [
+    "freebsd"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "license": "MIT"
+}

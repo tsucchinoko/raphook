@@ -1,0 +1,17 @@
+{
+  "name": "raphook-openbsd-arm64",
+  "version": "0.1.0",
+  "description": "Git hooks manager written in Rust (OpenBSD arm64 build)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsucchinoko/raphook.git",
+    "directory": "packages/raphook-openbsd-arm64"
+  },
+  "os": [
+    "openbsd"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "raphook-darwin-arm64",
+  "version": "0.1.0",
+  "description": "The macOS ARM 64-bit binary for raphook, git hooks manager.",
+  "preferUnplugged": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsucchinoko/raphook.git"
+  },
+  "license": "MIT",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ]
+}
