@@ -96,7 +96,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: raphook-*
-          merge-multiple: true
+          merge-multiple: false
+      - name: Debug directory structure
+        run: |
+          echo "Current directory contents:"
+          ls -la
+          echo "\nDist directory contents:"
+          ls -la dist/
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -106,8 +112,8 @@ jobs:
 
       - name: Prepare release files
         run: |
-          mkdir release
-          cp -r */raphook-*/* release/
+          mkdir -p release
+          cp -r dist/*/bin/* release/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -120,16 +126,6 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish platform packages
-        run: |
-          for pkg in dist/raphook-*; do
-            cd $pkg
-            npm publish --access public
-            cd ../..
-          done
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish main package
         working-directory: packages/npm/raphook
