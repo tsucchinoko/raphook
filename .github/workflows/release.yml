@@ -117,6 +117,8 @@ jobs:
       #     generate_release_notes: true
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate npm packages
+        run: node packages/npm/raphook/scripts/generate-packages.mjs
 
       - name: Publish main package
         run: |

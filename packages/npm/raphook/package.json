@@ -7,7 +7,7 @@
     "raphook": "bin/index.js"
   },
   "scripts": {
-    "install": "node postinstall.js"
+    "postinstall": "node postinstall.js"
   },
   "author": "tsucchinoko",
   "repository": {
