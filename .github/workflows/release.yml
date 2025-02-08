@@ -60,7 +60,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: "dist/raphook-*/*"
+          files: "raphook-*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,8 +70,21 @@ jobs:
           node-version: "18"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Publish to npm
-        run: npm publish
+      - name: Publish platform-specific packages
+        run: |
+          for dir in raphook-*; do
+            if [ -d "$dir" ]; then
+              cd "$dir"
+              npm publish --access public
+              cd ..
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish main package
+        working-directory: packages/npm/raphook
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
