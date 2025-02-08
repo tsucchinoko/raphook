@@ -13,14 +13,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tsucchinoko/raphook.git",
-    "directory": "packages/raphook"
+    "directory": "packages/npm/raphook"
   },
   "license": "MIT",
   "optionalDependencies": {
-    "raphook-darwin-arm64": "0.1.4",
-    "raphook-darwin-x64": "0.1.4",
-    "raphook-linux-arm64": "0.1.4",
-    "raphook-linux-x64": "0.1.4"
+    "raphook/darwin-arm64": "0.1.4",
+    "raphook/raphook-darwin-x64": "0.1.4",
+    "raphook/raphook-linux-arm64": "0.1.4",
+    "raphook/raphook-linux-x64": "0.1.4"
   },
   "engines": {
     "node": ">=18"
