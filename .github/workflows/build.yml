@@ -18,25 +18,31 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             artifact_name: raphook-linux-x64
+            use_cross: false
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             artifact_name: raphook-linux-arm64
+            use_cross: true
 
           # macOS builds
           - os: macos-latest
             target: x86_64-apple-darwin
             artifact_name: raphook-darwin-x64
+            use_cross: false
           - os: macos-latest
             target: aarch64-apple-darwin
             artifact_name: raphook-darwin-arm64
+            use_cross: false
 
           # Windows builds
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             artifact_name: raphook-windows-x64
+            use_cross: false
           - os: windows-latest
             target: aarch64-pc-windows-msvc
             artifact_name: raphook-windows-arm64
+            use_cross: false
 
     steps:
       - uses: actions/checkout@v3
@@ -46,17 +52,18 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
-      - name: Install cross-compilation tools
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
+      - name: Install cross
+        if: matrix.use_cross
+        run: cargo install cross
 
       - name: Build binary
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --target ${{ matrix.target }}
+        shell: bash
+        run: |
+          if [ "${{ matrix.use_cross }}" = "true" ]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
 
       - name: Prepare package
         shell: bash
