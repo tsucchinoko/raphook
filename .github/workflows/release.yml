@@ -99,9 +99,6 @@ jobs:
           node-version: "18"
           registry-url: "https://registry.npmjs.org"
 
-      - name: List artifacts
-        run: |
-          ls -R dist/
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -110,7 +107,7 @@ jobs:
           draft: false
           body_path: ${{ github.workspace }}/RELEASE_NOTES
           files: |
-            dist/raphook-*
+            raphook-*
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
