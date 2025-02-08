@@ -4,12 +4,11 @@ use crate::raphook;
 use std::process::Command;
 
 fn execute_command(command: &str) -> io::Result<()> {
-    #[cfg(not(target_os = "windows"))]
-    let mut binding = Command::new("sh");
-
-    let cmd = binding.args(["-c", command]);
-
-    let status = cmd.status()?;
+    let status = if cfg!(windows) {
+        Command::new("cmd").args(["/C", command]).status()?
+    } else {
+        Command::new("sh").args(["-c", command]).status()?
+    };
 
     if !status.success() {
         return Err(io::Error::new(

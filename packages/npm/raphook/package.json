@@ -20,9 +20,7 @@
     "raphook-darwin-arm64": "0.1.0",
     "raphook-darwin-x64": "0.1.0",
     "raphook-linux-arm64": "0.1.0",
-    "raphook-linux-x64": "0.1.0",
-    "raphook-windows-arm64": "0.1.0",
-    "raphook-windows-x64": "0.1.0"
+    "raphook-linux-x64": "0.1.0"
   },
   "keywords": [
     "git",

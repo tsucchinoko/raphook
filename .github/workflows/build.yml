@@ -35,14 +35,14 @@ jobs:
             use_cross: false
 
           # Windows builds
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            artifact_name: raphook-windows-x64
-            use_cross: false
-          - os: windows-latest
-            target: aarch64-pc-windows-msvc
-            artifact_name: raphook-windows-arm64
-            use_cross: false
+        #   - os: windows-latest
+        #     target: x86_64-pc-windows-msvc
+        #     artifact_name: raphook-windows-x64
+        #     use_cross: false
+        #   - os: windows-latest
+        #     target: aarch64-pc-windows-msvc
+        #     artifact_name: raphook-windows-arm64
+        #     use_cross: false
 
     steps:
       - uses: actions/checkout@v3

@@ -1,6 +1,8 @@
 use crate::raphook;
 use std::fs::{self, File};
 use std::io::{self, Read, Write};
+
+#[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
@@ -50,7 +52,12 @@ fn install_hook(hooks_dir: &str, hook_name: &str) -> io::Result<()> {
     );
 
     fs::write(&hook_path, template)?;
+    #[cfg(unix)]
     fs::set_permissions(&hook_path, fs::Permissions::from_mode(0o755))?;
+    #[cfg(windows)]
+    {
+        // TODO: Windowsでは実行権限の設定
+    }
     Ok(())
 }
 
