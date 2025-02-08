@@ -22,6 +22,14 @@
     "raphook-linux-arm64": "0.1.0",
     "raphook-linux-x64": "0.1.0"
   },
+  "files": [
+    "bin",
+    "get-exe.js",
+    "postinstall.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [
     "git",
     "hook",
@@ -29,8 +37,7 @@
   ],
   "os": [
     "darwin",
-    "linux",
-    "win32"
+    "linux"
   ],
   "cpu": [
     "x64",

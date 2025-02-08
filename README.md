@@ -1,5 +1,7 @@
 # Raphook
 
+[![Build Status](https://github.com/tsucchinoko/raphook/workflows/Build/badge.svg)](https://github.com/tsucchinoko/raphook/actions)
+
 Git hook manager for Node.js projects inspired by `lefthook`.
 
 ## Install
