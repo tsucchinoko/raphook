@@ -5,70 +5,109 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
+  check:
+    name: Check version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
   build:
-    name: Build (${{ matrix.os }})
+    needs: check
+    name: Build (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
+          # Linux builds
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact_name: raphook-linux-x64.tar.gz
+            artifact_name: raphook-linux-x64
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            artifact_name: raphook-linux-arm64
+            use_cross: true
+
+          # macOS builds
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: raphook-darwin-x64.tar.gz
-          # - os: windows-latest
-          #   target: x86_64-pc-windows-msvc
-          #   artifact_name: raphook-windows-x64.tar.gz
+            artifact_name: raphook-darwin-x64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: raphook-darwin-arm64
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
+          targets: ${{ matrix.target }}
 
-      - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+      - name: Install cross
+        if: matrix.use_cross
+        run: cargo install cross
 
-      - name: Package
+      - name: Build binary
         shell: bash
         run: |
-          cd target/${{ matrix.target }}/release
-          tar czf ../../../${{ matrix.artifact_name }} raphook*
+          if [ "${{ matrix.use_cross }}" = "true" ]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
 
-      - name: Upload artifacts
+      - name: Prepare package
+        shell: bash
+        run: |
+          mkdir -p dist/${{ matrix.artifact_name }}/bin
+          cp target/${{ matrix.target }}/release/raphook dist/${{ matrix.artifact_name }}/bin/
+          cp packages/npm/${{ matrix.artifact_name }}/package.json dist/${{ matrix.artifact_name }}/
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}
+          path: dist/${{ matrix.artifact_name }}
 
   publish:
-    needs: build
+    needs: [check, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
         with:
-          files: "raphook-*"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: dist
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
           registry-url: "https://registry.npmjs.org"
+
+      - name: Publish platform packages
+        run: |
+          for pkg in dist/raphook-*; do
+            cd $pkg
+            npm publish --access public
+            cd ../..
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish main package
         working-directory: packages/npm/raphook
@@ -76,5 +115,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-permissions:
-  contents: write
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check.outputs.version }}
+          name: Release v${{ needs.check.outputs.version }}
+          files: "dist/raphook-*/bin/*"
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
