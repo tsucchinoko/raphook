@@ -1,6 +1,6 @@
 {
   "name": "raphook-linux-arm64",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Git hooks manager written in Rust (Linux arm64 build)",
   "repository": {
     "type": "git",

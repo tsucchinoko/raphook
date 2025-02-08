@@ -1,6 +1,6 @@
 {
   "name": "raphook",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Git hooks manager written in Rust",
   "main": "bin/index.js",
   "bin": {
@@ -17,10 +17,10 @@
   },
   "license": "MIT",
   "optionalDependencies": {
-    "raphook-darwin-arm64": "0.1.1",
-    "raphook-darwin-x64": "0.1.1",
-    "raphook-linux-arm64": "0.1.1",
-    "raphook-linux-x64": "0.1.1"
+    "raphook-darwin-arm64": "0.1.2",
+    "raphook-darwin-x64": "0.1.2",
+    "raphook-linux-arm64": "0.1.2",
+    "raphook-linux-x64": "0.1.2"
   },
   "engines": {
     "node": ">=18"
