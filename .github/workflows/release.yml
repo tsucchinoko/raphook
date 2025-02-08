@@ -107,9 +107,11 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
+          draft: false
+          body_path: ${{ github.workspace }}/RELEASE_NOTES
           files: |
-            dist/raphook-*/bin/raphook
-          generate_release_notes: true
+            dist/raphook-*
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
