@@ -1,0 +1,83 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux builds
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: raphook-linux-x64
+            use_cross: false
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            artifact_name: raphook-linux-arm64
+            use_cross: true
+
+          # macOS builds
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: raphook-darwin-x64
+            use_cross: false
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: raphook-darwin-arm64
+            use_cross: false
+
+          # Windows builds
+        #   - os: windows-latest
+        #     target: x86_64-pc-windows-msvc
+        #     artifact_name: raphook-windows-x64
+        #     use_cross: false
+        #   - os: windows-latest
+        #     target: aarch64-pc-windows-msvc
+        #     artifact_name: raphook-windows-arm64
+        #     use_cross: false
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross
+        if: matrix.use_cross
+        run: cargo install cross
+
+      - name: Build binary
+        shell: bash
+        run: |
+          if [ "${{ matrix.use_cross }}" = "true" ]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
+
+      - name: Prepare package
+        shell: bash
+        run: |
+          mkdir -p dist/${{ matrix.artifact_name }}/bin
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            cp target/${{ matrix.target }}/release/raphook.exe dist/${{ matrix.artifact_name }}/bin/
+          else
+            cp target/${{ matrix.target }}/release/raphook dist/${{ matrix.artifact_name }}/bin/
+          fi
+          cp packages/npm/${{ matrix.artifact_name }}/package.json dist/${{ matrix.artifact_name }}/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: dist/${{ matrix.artifact_name }}

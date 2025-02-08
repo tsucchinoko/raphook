@@ -1,0 +1,17 @@
+{
+  "name": "raphook-windows-x64",
+  "version": "0.1.0",
+  "description": "Git hooks manager written in Rust (Windows x64 build)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsucchinoko/raphook.git",
+    "directory": "packages/raphook-windows-x64"
+  },
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "license": "MIT"
+}
