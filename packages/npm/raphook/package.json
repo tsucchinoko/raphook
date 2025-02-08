@@ -22,11 +22,6 @@
     "raphook-linux-arm64": "0.1.1",
     "raphook-linux-x64": "0.1.1"
   },
-  "files": [
-    "bin",
-    "get-exe.js",
-    "postinstall.js"
-  ],
   "engines": {
     "node": ">=18"
   },
