@@ -107,8 +107,8 @@ jobs:
           draft: false
           body_path: ${{ github.workspace }}/RELEASE_NOTES
           files: |
-            raphook-*
-          fail_on_unmatched_files: true
+            dist/raphook-darwin-arm64*
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
