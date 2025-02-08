@@ -21,10 +21,6 @@
     "raphook-darwin-x64": "0.1.0",
     "raphook-linux-arm64": "0.1.0",
     "raphook-linux-x64": "0.1.0",
-    "raphook-freebsd-arm64": "0.1.0",
-    "raphook-freebsd-x64": "0.1.0",
-    "raphook-openbsd-arm64": "0.1.0",
-    "raphook-openbsd-x64": "0.1.0",
     "raphook-windows-arm64": "0.1.0",
     "raphook-windows-x64": "0.1.0"
   },
