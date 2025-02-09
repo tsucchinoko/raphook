@@ -4,7 +4,8 @@ import { fileURLToPath } from "node:url";
 import { format } from "node:util";
 
 const PACKAGES_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
-const REPO_ROOT = resolve(PACKAGES_ROOT, "../..");
+// GitHub ActionsのWorkSpaceが`/home/runner/work/raphook/raphook`という名前になっているため
+const REPO_ROOT = resolve(PACKAGES_ROOT, "../../raphook");
 const MANIFEST_PATH = resolve(PACKAGES_ROOT, "npm", "raphook", "package.json");
 
 const rootManifest = JSON.parse(
@@ -19,9 +20,7 @@ function copyBinaryToNativePackage(platform, arch) {
   const os = platform.split("-")[0];
   const buildName = getName(platform, arch);
   const packageRoot = resolve(PACKAGES_ROOT, "npm", buildName);
-  console.log("packageRoot!!", packageRoot);
   const packageName = `raphook/${buildName}`;
-  console.log("packageName!!", packageName);
 
   // Update the package.json manifest
   const { version, license, repository, engines } = rootManifest;
@@ -55,11 +54,12 @@ function copyBinaryToNativePackage(platform, arch) {
   const binarySource = resolve(
     REPO_ROOT,
     "dist",
+    `${getName(platform, arch, "raphook")}${ext}`,
+    // TODO: 名前が重複しているため、CIの設定から見直す
     `${getName(platform, arch, "raphook")}${ext}`
   );
   console.log("binarySource!!", binarySource);
   const binaryTarget = resolve(packageRoot, `raphook${ext}`);
-  console.log("binaryTarget!!", binaryTarget);
 
   if (!fs.existsSync(binarySource)) {
     console.error(
