@@ -97,7 +97,9 @@ jobs:
         with:
           pattern: raphook-*
           path: dist
-          merge-multiple: false
+          merge-multiple: true
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
