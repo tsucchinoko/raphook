@@ -73,14 +73,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist/${{ matrix.artifact_name }}/bin
-          cp target/${{ matrix.target }}/release/raphook ./dist/${{ matrix.artifact_name }}/bin/
-          cp packages/npm/${{ matrix.artifact_name }}/package.json ./dist/${{ matrix.artifact_name }}/
+          cp target/${{ matrix.target }}/release/raphook ./dist/${{ matrix.artifact_name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ./dist/${{ matrix.artifact_name }}/*
+          path: ./dist/${{ matrix.artifact_name }}
           if-no-files-found: error
 
   publish:
@@ -97,7 +96,15 @@ jobs:
         with:
           pattern: raphook-*
           path: dist
-          merge-multiple: false
+          merge-multiple: true
+      - name: Display current directory
+        run: pwd
+      - name: Display structure of downloaded files
+        run: |
+          echo "Directory structure:"
+          ls -R dist/
+          echo "Files in dist:"
+          find dist -type f
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
