@@ -95,9 +95,10 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: raphook-*
-          path: dist
-          merge-multiple: false
+          path: /dist
+          merge-multiple: true
+      - name: Display structure of downloaded files
+        run: ls -R dist
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
