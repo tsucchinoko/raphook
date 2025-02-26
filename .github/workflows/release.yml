@@ -112,18 +112,18 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      # TODO: Create GitHub Release
-      # - name: Create GitHub Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: ${{ github.ref_name }}
-      #     name: Release ${{ github.ref_name }}
-      #     draft: false
-      #     files: dist/raphook-*
-      #     fail_on_unmatched_files: true
-      #     generate_release_notes: true
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          files: dist/raphook-*
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate npm packages
         run: node packages/npm/raphook/scripts/generate-packages.mjs
 
