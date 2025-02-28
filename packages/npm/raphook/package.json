@@ -17,10 +17,8 @@
   },
   "license": "MIT",
   "optionalDependencies": {
-    "raphook/darwin-arm64": "0.1.7",
-    "raphook/raphook-darwin-x64": "0.1.7",
-    "raphook/raphook-linux-arm64": "0.1.7",
-    "raphook/raphook-linux-x64": "0.1.7"
+    "raphook-darwin-arm64": "0.1.7",
+    "raphook-darwin-x64": "0.1.7"
   },
   "engines": {
     "node": ">=18"
@@ -31,8 +29,7 @@
     "manager"
   ],
   "os": [
-    "darwin",
-    "linux"
+    "darwin"
   ],
   "cpu": [
     "x64",

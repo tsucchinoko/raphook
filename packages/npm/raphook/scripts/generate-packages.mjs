@@ -20,18 +20,30 @@ function copyBinaryToNativePackage(platform, arch) {
   const os = platform.split("-")[0];
   const buildName = getName(platform, arch);
   const packageRoot = resolve(PACKAGES_ROOT, "npm", buildName);
-  const packageName = `raphook/${buildName}`;
+  const packageName = buildName;
 
-  // Update the package.json manifest
+  const binDir = resolve(packageRoot, "bin");
+  if (!fs.existsSync(binDir)) {
+    fs.mkdirSync(binDir, { recursive: true });
+  }
+
   const { version, license, repository, engines } = rootManifest;
 
   const manifest = JSON.stringify(
     {
       name: packageName,
       version,
+      description: `The ${
+        os === "darwin" ? "macOS" : os === "win32" ? "Windows" : "Linux"
+      } ${
+        arch === "arm64" ? "ARM 64-bit" : "x64"
+      } binary for raphook, git hooks manager.`,
+      preferUnplugged: false,
       license,
-      repository,
-      engines,
+      repository: {
+        ...repository,
+        directory: `packages/npm/${packageName}`,
+      },
       os: [os],
       cpu: [arch],
       libc:
@@ -49,14 +61,13 @@ function copyBinaryToNativePackage(platform, arch) {
   console.log(`Update manifest ${manifestPath}`);
   fs.writeFileSync(manifestPath, manifest);
 
-  // Copy the CLI binary
   const ext = os === "win32" ? ".exe" : "";
   const binarySource = resolve(
     REPO_ROOT,
     "dist",
     `${getName(platform, arch, "raphook")}${ext}`
   );
-  const binaryTarget = resolve(packageRoot, `raphook${ext}`);
+  const binaryTarget = resolve(binDir, `raphook${ext}`);
 
   if (!fs.existsSync(binarySource)) {
     console.error(
@@ -86,13 +97,16 @@ function writeManifest() {
   manifestData.version = rootManifest.version;
   manifestData.optionalDependencies = Object.fromEntries(nativePackages);
 
+  manifestData.os = [...new Set(PLATFORMS.map((p) => p.split("-")[0]))];
+  manifestData.cpu = ARCHITECTURES;
+  console.log("manifestData: ", manifestData);
+
   console.log(`Update manifest ${manifestPath}`);
   const content = JSON.stringify(manifestData, null, 2);
   fs.writeFileSync(manifestPath, content);
 }
 
-// TODO: support win , musl and "linux-%s"
-// const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s", "linux-%s-musl"];
+// const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s"];
 const PLATFORMS = ["darwin-%s"];
 const ARCHITECTURES = ["x64", "arm64"];
 
