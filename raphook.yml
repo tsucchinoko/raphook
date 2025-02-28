@@ -1,17 +1,11 @@
 pre-push:
   commands:
-    version:
-      tags: version
-      run: cargo version
+    echo:
+      tags: frontend security
+      run: echo "Hello, pre-push!"
 
 pre-commit:
-  parallel: true
   commands:
-    version:
-      tags: version
-      run: cargo version
-  scripts:
-    "hello.js":
-      runner: node
-    "any.go":
-      runner: go run
+    echo:
+      tags: frontend security
+      run: echo "Hello, pre-commit!"
