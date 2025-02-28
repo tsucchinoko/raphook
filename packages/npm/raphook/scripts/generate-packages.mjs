@@ -54,8 +54,6 @@ function copyBinaryToNativePackage(platform, arch) {
   const binarySource = resolve(
     REPO_ROOT,
     "dist",
-    `${getName(platform, arch, "raphook")}${ext}`,
-    // TODO: 名前が重複しているため、CIの設定から見直す
     `${getName(platform, arch, "raphook")}${ext}`
   );
   console.log("binarySource!!", binarySource);
