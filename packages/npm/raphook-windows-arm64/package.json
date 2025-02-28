@@ -1,6 +1,6 @@
 {
   "name": "raphook-windows-arm64",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Git hooks manager written in Rust (Windows arm64 build)",
   "repository": {
     "type": "git",
