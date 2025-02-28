@@ -6,6 +6,9 @@
   "bin": {
     "raphook": "bin/index.js"
   },
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
   "author": "tsucchinoko",
   "repository": {
     "type": "git",
