@@ -73,11 +73,13 @@ function copyBinaryToNativePackage(platform, arch) {
     console.error(
       `Source for binary for ${buildName} not found at: ${binarySource}`
     );
-    process.exit(1);
+    console.warn(`Skipping package generation for ${buildName}`);
+    return false;
   }
 
   fs.copyFileSync(binarySource, binaryTarget);
   fs.chmodSync(binaryTarget, 0o755);
+  return true;
 }
 
 function writeManifest() {
@@ -87,29 +89,48 @@ function writeManifest() {
     fs.readFileSync(manifestPath).toString("utf-8")
   );
 
-  const nativePackages = PLATFORMS.flatMap((platform) =>
-    ARCHITECTURES.map((arch) => [
-      `${getName(platform, arch)}`,
-      rootManifest.version,
-    ])
-  );
+  // 実際に生成されたパッケージのみを依存関係に追加
+  const generatedPackages = [];
+
+  for (const platform of PLATFORMS) {
+    for (const arch of ARCHITECTURES) {
+      const packageName = getName(platform, arch);
+      const packageRoot = resolve(PACKAGES_ROOT, "npm", packageName);
+      const binDir = resolve(packageRoot, "bin");
+      const os = platform.split("-")[0];
+      const ext = os === "win32" ? ".exe" : "";
+      const binaryPath = resolve(binDir, `raphook${ext}`);
+
+      if (fs.existsSync(binaryPath)) {
+        generatedPackages.push([packageName, rootManifest.version]);
+      }
+    }
+  }
 
   manifestData.version = rootManifest.version;
-  manifestData.optionalDependencies = Object.fromEntries(nativePackages);
+  manifestData.optionalDependencies = Object.fromEntries(generatedPackages);
 
-  manifestData.os = [...new Set(PLATFORMS.map((p) => p.split("-")[0]))];
+  // 実際に生成されたパッケージのOSとCPUのみを含める
+  const generatedOS = [
+    ...new Set(generatedPackages.map(([name]) => name.split("-")[1])),
+  ];
+  manifestData.os = generatedOS;
   manifestData.cpu = ARCHITECTURES;
-  console.log("manifestData: ", manifestData);
+
+  console.log("Generated packages:", generatedPackages);
+  console.log("Supported OS:", generatedOS);
 
   console.log(`Update manifest ${manifestPath}`);
   const content = JSON.stringify(manifestData, null, 2);
   fs.writeFileSync(manifestPath, content);
 }
 
-// const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s"];
-const PLATFORMS = ["darwin-%s"];
+// すべてのプラットフォームを対象にするが、実際にバイナリが存在するものだけをパッケージ化
+const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s"];
+// const PLATFORMS = ["darwin-%s"];
 const ARCHITECTURES = ["x64", "arm64"];
 
+// 各プラットフォーム向けのパッケージを生成
 for (const platform of PLATFORMS) {
   for (const arch of ARCHITECTURES) {
     copyBinaryToNativePackage(platform, arch);
