@@ -56,7 +56,6 @@ function copyBinaryToNativePackage(platform, arch) {
     "dist",
     `${getName(platform, arch, "raphook")}${ext}`
   );
-  console.log("binarySource!!", binarySource);
   const binaryTarget = resolve(packageRoot, `raphook${ext}`);
 
   if (!fs.existsSync(binarySource)) {
@@ -66,7 +65,6 @@ function copyBinaryToNativePackage(platform, arch) {
     process.exit(1);
   }
 
-  console.log(`Copy binary ${binaryTarget}`);
   fs.copyFileSync(binarySource, binaryTarget);
   fs.chmodSync(binaryTarget, 0o755);
 }
