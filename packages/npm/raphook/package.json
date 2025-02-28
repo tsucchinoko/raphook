@@ -1,32 +1,24 @@
 {
   "name": "raphook",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "Git hooks manager written in Rust",
   "main": "bin/index.js",
   "bin": {
     "raphook": "bin/index.js"
   },
-  "scripts": {
-    "install": "node install.js"
-  },
   "author": "tsucchinoko",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tsucchinoko/raphook.git",
-    "directory": "packages/raphook"
+    "directory": "packages/npm/raphook"
   },
   "license": "MIT",
   "optionalDependencies": {
-    "raphook-darwin-arm64": "0.1.0",
-    "raphook-darwin-x64": "0.1.0",
-    "raphook-linux-arm64": "0.1.0",
-    "raphook-linux-x64": "0.1.0"
+    "raphook/darwin-arm64": "0.1.6",
+    "raphook/raphook-darwin-x64": "0.1.6",
+    "raphook/raphook-linux-arm64": "0.1.6",
+    "raphook/raphook-linux-x64": "0.1.6"
   },
-  "files": [
-    "bin",
-    "get-exe.js",
-    "postinstall.js"
-  ],
   "engines": {
     "node": ">=18"
   },
