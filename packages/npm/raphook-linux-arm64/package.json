@@ -4,8 +4,8 @@
   "description": "Git hooks manager written in Rust (Linux arm64 build)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tsucchinoko/raphook.git",
-    "directory": "packages/raphook-linux-arm64"
+    "url": "git+https://github.com/tsucchinoko/raphook.git",
+    "directory": "packages/npm/raphook-linux-arm64"
   },
   "os": [
     "linux"

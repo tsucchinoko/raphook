@@ -4,8 +4,8 @@
   "description": "Git hooks manager written in Rust (Windows arm64 build)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tsucchinoko/raphook.git",
-    "directory": "packages/raphook-windows-arm64"
+    "url": "git+https://github.com/tsucchinoko/raphook.git",
+    "directory": "packages/npm/raphook-windows-arm64"
   },
   "os": [
     "win32"

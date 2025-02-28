@@ -5,7 +5,8 @@
   "preferUnplugged": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/tsucchinoko/raphook.git"
+    "url": "git+https://github.com/tsucchinoko/raphook.git",
+    "directory": "packages/npm/raphook-darwin-arm64"
   },
   "license": "MIT",
   "os": [
