@@ -20,18 +20,30 @@ function copyBinaryToNativePackage(platform, arch) {
   const os = platform.split("-")[0];
   const buildName = getName(platform, arch);
   const packageRoot = resolve(PACKAGES_ROOT, "npm", buildName);
-  const packageName = `raphook/${buildName}`;
+  const packageName = buildName;
 
-  // Update the package.json manifest
+  const binDir = resolve(packageRoot, "bin");
+  if (!fs.existsSync(binDir)) {
+    fs.mkdirSync(binDir, { recursive: true });
+  }
+
   const { version, license, repository, engines } = rootManifest;
 
   const manifest = JSON.stringify(
     {
       name: packageName,
       version,
+      description: `The ${
+        os === "darwin" ? "macOS" : os === "win32" ? "Windows" : "Linux"
+      } ${
+        arch === "arm64" ? "ARM 64-bit" : "x64"
+      } binary for raphook, git hooks manager.`,
+      preferUnplugged: false,
       license,
-      repository,
-      engines,
+      repository: {
+        ...repository,
+        directory: `packages/npm/${packageName}`,
+      },
       os: [os],
       cpu: [arch],
       libc:
@@ -49,26 +61,25 @@ function copyBinaryToNativePackage(platform, arch) {
   console.log(`Update manifest ${manifestPath}`);
   fs.writeFileSync(manifestPath, manifest);
 
-  // Copy the CLI binary
   const ext = os === "win32" ? ".exe" : "";
   const binarySource = resolve(
     REPO_ROOT,
     "dist",
     `${getName(platform, arch, "raphook")}${ext}`
   );
-  console.log("binarySource!!", binarySource);
-  const binaryTarget = resolve(packageRoot, `raphook${ext}`);
+  const binaryTarget = resolve(binDir, `raphook${ext}`);
 
   if (!fs.existsSync(binarySource)) {
     console.error(
       `Source for binary for ${buildName} not found at: ${binarySource}`
     );
-    process.exit(1);
+    console.warn(`Skipping package generation for ${buildName}`);
+    return false;
   }
 
-  console.log(`Copy binary ${binaryTarget}`);
   fs.copyFileSync(binarySource, binaryTarget);
   fs.chmodSync(binaryTarget, 0o755);
+  return true;
 }
 
 function writeManifest() {
@@ -78,26 +89,48 @@ function writeManifest() {
     fs.readFileSync(manifestPath).toString("utf-8")
   );
 
-  const nativePackages = PLATFORMS.flatMap((platform) =>
-    ARCHITECTURES.map((arch) => [
-      `${getName(platform, arch)}`,
-      rootManifest.version,
-    ])
-  );
+  // 実際に生成されたパッケージのみを依存関係に追加
+  const generatedPackages = [];
+
+  for (const platform of PLATFORMS) {
+    for (const arch of ARCHITECTURES) {
+      const packageName = getName(platform, arch);
+      const packageRoot = resolve(PACKAGES_ROOT, "npm", packageName);
+      const binDir = resolve(packageRoot, "bin");
+      const os = platform.split("-")[0];
+      const ext = os === "win32" ? ".exe" : "";
+      const binaryPath = resolve(binDir, `raphook${ext}`);
+
+      if (fs.existsSync(binaryPath)) {
+        generatedPackages.push([packageName, rootManifest.version]);
+      }
+    }
+  }
 
   manifestData.version = rootManifest.version;
-  manifestData.optionalDependencies = Object.fromEntries(nativePackages);
+  manifestData.optionalDependencies = Object.fromEntries(generatedPackages);
+
+  // 実際に生成されたパッケージのOSとCPUのみを含める
+  const generatedOS = [
+    ...new Set(generatedPackages.map(([name]) => name.split("-")[1])),
+  ];
+  manifestData.os = generatedOS;
+  manifestData.cpu = ARCHITECTURES;
+
+  console.log("Generated packages:", generatedPackages);
+  console.log("Supported OS:", generatedOS);
 
   console.log(`Update manifest ${manifestPath}`);
   const content = JSON.stringify(manifestData, null, 2);
   fs.writeFileSync(manifestPath, content);
 }
 
-// TODO: support win , musl and "linux-%s"
-// const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s", "linux-%s-musl"];
+// すべてのプラットフォームを対象にするが、実際にバイナリが存在するものだけをパッケージ化
+// const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s"];
 const PLATFORMS = ["darwin-%s"];
 const ARCHITECTURES = ["x64", "arm64"];
 
+// 各プラットフォーム向けのパッケージを生成
 for (const platform of PLATFORMS) {
   for (const arch of ARCHITECTURES) {
     copyBinaryToNativePackage(platform, arch);

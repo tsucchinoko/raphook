@@ -132,3 +132,17 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish platform-specific packages
+        run: |
+          # Find all platform-specific package directories
+          for pkg_dir in packages/npm/raphook-*; do
+            if [ -d "$pkg_dir" ]; then
+              echo "Publishing package in $pkg_dir"
+              cd "$pkg_dir"
+              npm publish --access public
+              cd - > /dev/null
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
