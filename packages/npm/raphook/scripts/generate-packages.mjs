@@ -126,8 +126,8 @@ function writeManifest() {
 }
 
 // すべてのプラットフォームを対象にするが、実際にバイナリが存在するものだけをパッケージ化
-const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s"];
-// const PLATFORMS = ["darwin-%s"];
+// const PLATFORMS = ["win32-%s", "darwin-%s", "linux-%s"];
+const PLATFORMS = ["darwin-%s"];
 const ARCHITECTURES = ["x64", "arm64"];
 
 // 各プラットフォーム向けのパッケージを生成
