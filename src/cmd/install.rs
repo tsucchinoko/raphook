@@ -1,6 +1,6 @@
 use crate::raphook;
 use std::fs::{self, File};
-use std::io::{self, Read, Write};
+use std::io::{self, Write};
 
 use std::path::Path;
 
@@ -12,22 +12,18 @@ pub const AVAILABLE_HOOKS: &[&str] = &[
     "pre-push",
 ];
 
+// テンプレートファイルをバイナリに組み込む
+const CONFIG_TEMPLATE: &str = include_str!("../template/config-template.yml");
+const HOOK_TEMPLATE: &str = include_str!("../template/hook-template.sh");
+
 fn ensure_config_file_exists(path: &str) -> io::Result<String> {
     let config_file = Path::new(path).join("raphook.yml");
 
     if !config_file.exists() {
-        // TODO: このファイルは配信されないため、インストール時にエラーが発生する
-        let template_path = Path::new(path)
-            .join("src")
-            .join("template")
-            .join("config-template.yml");
-
-        let mut template = String::new();
-        File::open(&template_path)?.read_to_string(&mut template)?;
-
+        println!("config file not found, creating default config file");
         // テンプレートファイルの書き込み
         let mut file = File::create(&config_file)?;
-        file.write_all(template.as_bytes())?;
+        file.write_all(CONFIG_TEMPLATE.as_bytes())?;
     }
     Ok(config_file.to_string_lossy().into_owned())
 }
@@ -42,14 +38,9 @@ fn ensure_hooks_dir_exists(path: &str) -> io::Result<String> {
 
 fn install_hook(hooks_dir: &str, hook_name: &str) -> std::io::Result<()> {
     let hook_path = Path::new(hooks_dir).join(hook_name);
-    let template_path = Path::new("src/template/hook-template.sh");
-
-    // テンプレートファイルを読み込む
-    let mut template = String::new();
-    File::open(template_path)?.read_to_string(&mut template)?;
 
     // {hook_name}をフック名に置き換え
-    let hook_script = template.replace("{hook_name}", hook_name);
+    let hook_script = HOOK_TEMPLATE.replace("{hook_name}", hook_name);
 
     // ファイルに書き込み
     let mut file = File::create(&hook_path)?;

@@ -1,2 +1,6 @@
 /target
 .DS_Store
+
+packages/npm/test/*
+**/*/*.tgz
+**/*/bin/raphook
