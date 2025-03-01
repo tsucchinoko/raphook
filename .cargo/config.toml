@@ -1,0 +1,3 @@
+[alias]
+build-arm64-release = "build --release --target aarch64-apple-darwin"
+build-and-pack = "run --package raphook --bin run-script -- ./scripts/build-and-pack.sh" 
