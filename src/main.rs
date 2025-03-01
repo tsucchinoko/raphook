@@ -49,7 +49,7 @@ fn main() {
                     println!("✔️ ({})", hooks.join(", "));
                 }
                 Err(e) => {
-                    println!("❌\nError: {}", e);
+                    eprintln!("❌\nError: {}", e);
                 }
             }
         }
@@ -61,7 +61,7 @@ fn main() {
                     println!("✔️ Run commands ({})", hooks.join(", "));
                 }
                 Err(e) => {
-                    println!("❌\nError: {}", e);
+                    eprintln!("❌\nError: {}", e);
                 }
             }
         }
@@ -75,7 +75,7 @@ fn main() {
                     println!("✔️ ({})", hooks.join(", "));
                 }
                 Err(e) => {
-                    println!("❌\nError: {}", e);
+                    eprintln!("❌\nError: {}", e);
                 }
             }
         }

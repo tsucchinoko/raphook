@@ -3,3 +3,4 @@
 
 packages/npm/test/*
 **/*/*.tgz
+**/*/bin/raphook
