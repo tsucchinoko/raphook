@@ -34,13 +34,13 @@ Example raphook.yml
 pre-push:
   commands:
     echo:
-      tags: frontend security
+      tags: pre-push sample
       run: echo "Hello, pre-push!"
 
 pre-commit:
   commands:
     echo:
-      tags: frontend security
+      tags: pre-commit sample
       run: echo "Hello, pre-commit!"
 ```
 
