@@ -1,6 +1,6 @@
 {
   "name": "raphook-darwin-x64",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Git hooks manager written in Rust (macOS x64 build)",
   "repository": {
     "type": "git",
