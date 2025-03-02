@@ -2,7 +2,7 @@ pub fn init_logger() {
     use env_logger::fmt::Color;
     use std::io::Write;
 
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug"))
         .format_timestamp(None)
         .format(|buf, record| {
             let mut target_style = buf.style();

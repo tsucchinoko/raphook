@@ -1,5 +1,5 @@
 use crate::raphook;
-use log::{error, info, warn};
+use log::{error, warn};
 use std::fs::{self, File};
 use std::io::{self, Write};
 
@@ -21,7 +21,7 @@ fn ensure_config_file_exists(path: &str) -> io::Result<String> {
     let config_file = Path::new(path).join("raphook.yml");
 
     if !config_file.exists() {
-        info!("config file not found, creating default config file");
+        println!("config file not found, creating default config file");
         // テンプレートファイルの書き込み
         let mut file = File::create(&config_file)?;
         file.write_all(CONFIG_TEMPLATE.as_bytes())?;
