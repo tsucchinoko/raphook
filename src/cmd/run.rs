@@ -32,7 +32,6 @@ pub fn run(path: &str, hook_name: &str) -> io::Result<Vec<String>> {
     })?;
     // 取得したコマンドの実行
     for command in hook.commands.values() {
-        println!("Running command: {}", command.run);
         execute_command(&command.run)?;
     }
 

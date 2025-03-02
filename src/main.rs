@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::io::Write;
+use log::{error, info};
 mod cmd;
 mod raphook;
 
@@ -27,7 +27,11 @@ enum Commands {
         hook_name: String,
     },
     /// List available hooks
-    List,
+    List {
+        /// Path to raphook's config file
+        #[arg(short, long, default_value = ".")]
+        path: String,
+    },
     /// Remove installed hooks
     Uninstall {
         /// Path to git repository
@@ -37,19 +41,21 @@ enum Commands {
 }
 
 fn main() {
+    // ロガーの初期化
+    raphook::logger::init_logger();
+
     let cli = Cli::parse();
 
     match &cli.command {
         Commands::Install { path } => {
             println!("Installing hooks in {}", path);
-            std::io::stdout().flush().unwrap();
 
             match cmd::install::install(path) {
                 Ok(hooks) => {
-                    println!("✔️ ({})", hooks.join(", "));
+                    info!("Successfully installed hooks: {}", hooks.join(", "));
                 }
                 Err(e) => {
-                    eprintln!("❌\nError: {}", e);
+                    error!("❌ Failed to install hooks: {}", e);
                 }
             }
         }
@@ -58,24 +64,34 @@ fn main() {
             // ここにフックの実行ロジックを実装
             match cmd::run::run(path, hook_name) {
                 Ok(hooks) => {
-                    println!("✔️ Run commands ({})", hooks.join(", "));
+                    info!("Successfully run commands: {}", hooks.join(", "));
                 }
                 Err(e) => {
-                    eprintln!("❌\nError: {}", e);
+                    error!("❌ Failed to run commands: {}", e);
                 }
             }
         }
-        Commands::List => {
-            println!("Available hooks:");
+        Commands::List { path } => {
+            let hooks = raphook::config::Config::load(path);
+            if let Err(e) = hooks {
+                error!("❌ Failed to load config: {}", e);
+                return;
+            }
+
+            let mut hook_names = Vec::new();
+            for (name, _) in hooks.unwrap().hooks {
+                hook_names.push(name.clone());
+            }
+            println!("Available hooks: {}", hook_names.join(", "));
         }
         Commands::Uninstall { path } => {
             println!("Uninstalling hooks from {}", path);
             match cmd::uninstall::uninstall(path) {
                 Ok(hooks) => {
-                    println!("✔️ ({})", hooks.join(", "));
+                    info!("Successfully uninstalled hooks: {}", hooks.join(", "));
                 }
                 Err(e) => {
-                    eprintln!("❌\nError: {}", e);
+                    error!("❌ Failed to uninstall hooks: {}", e);
                 }
             }
         }

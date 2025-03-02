@@ -1,6 +1,6 @@
 [package]
 name = "raphook"
-version = "0.1.11"
+version = "0.1.12"
 edition = "2021"
 description = "A simple tool to hook git hooks"
 
@@ -9,3 +9,5 @@ description = "A simple tool to hook git hooks"
 clap = { version = "4.5.27", features = ["derive"] }
 serde = { version = "1.0.217", features = ["derive"] }
 serde_yaml = "=0.8.26"
+log = "0.4"
+env_logger = "0.10"
