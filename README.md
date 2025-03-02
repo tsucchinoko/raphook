@@ -27,7 +27,7 @@ npx raphook install
 vim raphook.yml
 ```
 
-例:
+Example raphook.yml
 
 ```yaml
 # raphook.yml
