@@ -1,4 +1,5 @@
 use crate::raphook;
+use log::{error, info, warn};
 use std::fs::{self, File};
 use std::io::{self, Write};
 
@@ -20,7 +21,7 @@ fn ensure_config_file_exists(path: &str) -> io::Result<String> {
     let config_file = Path::new(path).join("raphook.yml");
 
     if !config_file.exists() {
-        println!("config file not found, creating default config file");
+        info!("config file not found, creating default config file");
         // テンプレートファイルの書き込み
         let mut file = File::create(&config_file)?;
         file.write_all(CONFIG_TEMPLATE.as_bytes())?;
@@ -72,7 +73,7 @@ pub fn install(path: &str) -> io::Result<Vec<String>> {
     let mut valid_hooks = Vec::new();
     for hook in config.hook_names().iter() {
         if !AVAILABLE_HOOKS.contains(&hook) {
-            eprintln!("Invalid hook: {}", hook);
+            warn!("Invalid hook: {}", hook);
             continue;
         }
         valid_hooks.push(hook.to_string());
@@ -83,7 +84,7 @@ pub fn install(path: &str) -> io::Result<Vec<String>> {
     for hook in valid_hooks.iter() {
         match install_hook(&hooks_dir, hook) {
             Ok(_) => installed_hooks.push(hook.to_string()),
-            Err(e) => eprintln!("Failed to install {}: {}", hook, e),
+            Err(e) => error!("Failed to install {}: {}", hook, e),
         }
     }
 

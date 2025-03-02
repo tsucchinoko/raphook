@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::io::Write;
+use log::{error, info};
 mod cmd;
 mod raphook;
 
@@ -37,45 +37,47 @@ enum Commands {
 }
 
 fn main() {
+    // ロガーの初期化
+    raphook::logger::init_logger();
+
     let cli = Cli::parse();
 
     match &cli.command {
         Commands::Install { path } => {
-            println!("Installing hooks in {}", path);
-            std::io::stdout().flush().unwrap();
+            info!("Installing hooks in {}", path);
 
             match cmd::install::install(path) {
                 Ok(hooks) => {
-                    println!("✔️ ({})", hooks.join(", "));
+                    info!("✔️ ({})", hooks.join(", "));
                 }
                 Err(e) => {
-                    eprintln!("❌\nError: {}", e);
+                    error!("❌\nError: {}", e);
                 }
             }
         }
         Commands::Run { path, hook_name } => {
-            println!("Running hook {}", hook_name);
+            info!("Running hook {}", hook_name);
             // ここにフックの実行ロジックを実装
             match cmd::run::run(path, hook_name) {
                 Ok(hooks) => {
-                    println!("✔️ Run commands ({})", hooks.join(", "));
+                    info!("✔️ Run commands ({})", hooks.join(", "));
                 }
                 Err(e) => {
-                    eprintln!("❌\nError: {}", e);
+                    error!("❌\nError: {}", e);
                 }
             }
         }
         Commands::List => {
-            println!("Available hooks:");
+            info!("Available hooks:");
         }
         Commands::Uninstall { path } => {
-            println!("Uninstalling hooks from {}", path);
+            info!("Uninstalling hooks from {}", path);
             match cmd::uninstall::uninstall(path) {
                 Ok(hooks) => {
-                    println!("✔️ ({})", hooks.join(", "));
+                    info!("✔️ ({})", hooks.join(", "));
                 }
                 Err(e) => {
-                    eprintln!("❌\nError: {}", e);
+                    error!("❌\nError: {}", e);
                 }
             }
         }
