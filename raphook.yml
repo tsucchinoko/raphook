@@ -1,11 +1,11 @@
 pre-push:
   commands:
     echo:
-      tags: frontend security
+      tags: echo pre-push
       run: echo "Hello, pre-push!"
 
 pre-commit:
   commands:
     echo:
-      tags: frontend security
+      tags: echo pre-commit
       run: echo "Hello, pre-commit!"
